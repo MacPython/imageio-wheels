@@ -1,0 +1,38 @@
+language:
+- objective-c
+env:
+  global:
+  - BUILD_COMMIT='latest-tag'  # comment out to build version in submodule
+  matrix:
+  - VERSION=2.7.9 NUMPY_VERSION=1.6.2 # tune to taste
+  - VERSION=3.3.5 NUMPY_VERSION=1.7.1
+  - VERSION=3.4.3 NUMPY_VERSION=1.7.1
+install:
+  - source terryfy/travis_tools.sh
+  - get_python_environment macpython $VERSION venv
+  - pip install delocate numpy==$NUMPY_VERSION
+  - if [ -n "$BUILD_COMMIT" ]; then
+        checkout_commit imageio $BUILD_COMMIT;
+    fi
+  - cd imageio
+  - python setup.py bdist_wheel
+  - delocate-listdeps dist/*.whl # lists library dependencies
+  - delocate-wheel dist/*.whl # copies library dependencies into wheel
+  - delocate-addplat --rm-orig -x 10_9 -x 10_10 dist/*.whl
+  - pip install dist/*.whl
+  - cd ..
+script:
+  # install dependencies for tests e.g - pip install nose
+  - mkdir tmp_for_test
+  - cd tmp_for_test
+  # Run the tests
+  - cd ..
+before_deploy: cd imageio/dist
+deploy:
+  provider: cloudfiles
+  username: travis-worker
+  api_key:
+    secure: ALZrkCwjz3nY/9GfTNPgVQHUmUpCc5SnZTaqIUlJrhVyOBu6aktXaRmQi+sTXzFn7a/PQsYDnoZ8nibCZ472oUVDGUOSbtjIEkPodU+aisLN2dSLNueQsUU7Dmt0SaeyJVGovzfyUiavIYLuAfOtCfUKrwAsi7XTVNQpdyWCQDs=
+  region: ORD
+  container: wheels
+  skip_cleanup: true

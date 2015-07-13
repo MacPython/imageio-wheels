@@ -1,0 +1,6 @@
+[submodule "imageio"]
+	path = imageio
+	url = git://github.com/imageio/imageio.git
+[submodule "terryfy"]
+	path = terryfy
+	url = git://github.com/MacPython/terryfy.git
