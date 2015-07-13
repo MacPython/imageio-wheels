@@ -3,6 +3,7 @@ language:
 env:
   global:
   - BUILD_COMMIT='latest-tag'  # comment out to build version in submodule
+  - PROJECT_DIR=imageio
   matrix:
   - VERSION=2.7.9 NUMPY_VERSION=1.6.2 # tune to taste
   - VERSION=3.3.5 NUMPY_VERSION=1.7.1
@@ -12,9 +13,21 @@ install:
   - get_python_environment macpython $VERSION venv
   - pip install delocate numpy==$NUMPY_VERSION
   - if [ -n "$BUILD_COMMIT" ]; then
-        checkout_commit imageio $BUILD_COMMIT;
+        checkout_commit $PROJECT_DIR $BUILD_COMMIT;
     fi
-  - cd imageio
+  - source terryfy/library_installers.sh
+  - clean_builds
+  # Convoluted build for freeimage, with patched Makefile
+  - cd working  # Created with `clean_builds`
+  - unzip ../archives/FreeImage3170.zip
+  - cd FreeImage
+  - make -f ../../patches/freeimage-Makefile.osx
+  # Manual install to our build prefix
+  - mkdir -p $BUILD_PREFIX/include $BUILD_PREFIX/lib
+  - cp Dist/*.h $BUILD_PREFIX/include
+  - cp Dist/*{a,dylib} $BUILD_PREFIX/lib
+  # Now build imageio
+  - cd ../../$PROJECT_DIR
   - python setup.py bdist_wheel
   - delocate-listdeps dist/*.whl # lists library dependencies
   - delocate-wheel dist/*.whl # copies library dependencies into wheel
@@ -27,12 +40,12 @@ script:
   - cd tmp_for_test
   # Run the tests
   - cd ..
-before_deploy: cd imageio/dist
+before_deploy: cd $PROJECT_DIR/dist
 deploy:
   provider: cloudfiles
   username: travis-worker
   api_key:
-    secure: ALZrkCwjz3nY/9GfTNPgVQHUmUpCc5SnZTaqIUlJrhVyOBu6aktXaRmQi+sTXzFn7a/PQsYDnoZ8nibCZ472oUVDGUOSbtjIEkPodU+aisLN2dSLNueQsUU7Dmt0SaeyJVGovzfyUiavIYLuAfOtCfUKrwAsi7XTVNQpdyWCQDs=
+      secure: "mpDLyFJwmX51mdIVVqX2U4tKyltpaB//+R2DJvrIvxBlUHlsjSQlBWk0ggGyxdj8LpVJ0/v38sf413FUnNFIdSz603Col8NlnmCop6o8tVx6Xa1iHdOs1eYjwQcaycHEW0okrQg3KvVJdw+Mr5Mm3noHCXC1aLoD96R7skNNGMc/47C+X/L7pXkWI0UP2+LQEGY7BvDTJvRmCd6mrIrx6ul0yBzztHl0mpMwTchsIyZcum9C3SSj273X1C8og6iPSywPi1hpPaooaUG2etk/HORZHKvxzzPQtUaQaDXEJKECAa+kTrGKU1j5rChsuTVqFm2CuXRa2g4J7msqDjYaxy20Cwu9v3MgZgPN1oGoX9KIKJQf2qwa4nZKEJlskuj2jkxxDN48eO3EE7cgIC+xuLwtfSslRfrdmhWfYYcY/+cMJmC8BwzspV8TxPheqMbuYPNN+4Mz/Hrh8vJnP6XLsOaYhDXOeE03DcoKrDWRJo2xjZ9DKXs1bF87PzoQDvThZsM8g/uwT7Dk1uTUdgAbRjg2WBgnj01S0Q+drKnjLufAajio7/a02I4wTpdim4vg4bI4E8QYTasHdmYElmzCK3zpo4tt0Yw6xnjKIngRwoZJukZYRBKLqf0h1wluB361jgJnA5Vl2Uf8EHkONPdS3vmDHOEs3MXPCFoXosNqg8g="
   region: ORD
   container: wheels
   skip_cleanup: true
