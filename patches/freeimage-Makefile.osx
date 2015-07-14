@@ -10,7 +10,7 @@ CC_X86_64 = Clang
 CPP_I386 = Clang++
 CPP_X86_64 = Clang++
 
-COMPILERFLAGS = -Os -fexceptions -fvisibility=hidden -DNO_LCMS -D__ANSI__ -mmacosx-version-min=10.6 -DDISABLE_PERF_MEASUREMENT 
+COMPILERFLAGS = -Os -fexceptions -fvisibility=hidden -DNO_LCMS -D__ANSI__ -mmacosx-version-min=10.6 -DDISABLE_PERF_MEASUREMENT -stdlib=libstdc++
 #-g -DDEBUG
 COMPILERFLAGS_I386 = -arch i386
 COMPILERFLAGS_X86_64 = -arch x86_64
@@ -22,8 +22,8 @@ CFLAGS_I386 = $(COMPILERFLAGS) $(COMPILERFLAGS_I386) $(INCLUDE) $(INCLUDE_I386)
 CFLAGS_X86_64 = $(COMPILERFLAGS) $(COMPILERFLAGS_X86_64) $(INCLUDE) $(INCLUDE_X86_64)
 CPPFLAGS_I386 = $(COMPILERPPFLAGS) $(CFLAGS_I386)
 CPPFLAGS_X86_64 = $(COMPILERPPFLAGS) $(CFLAGS_X86_64)
-LIBRARIES_I386 = -Wl,-syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk
-LIBRARIES_X86_64 = -Wl,-syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk
+LIBRARIES_I386 = -Wl -stdlib=libstdc++
+LIBRARIES_X86_64 = -Wl -stdlib=libstdc++
 LIBTOOL = libtool
 LIPO = lipo
 

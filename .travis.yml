@@ -40,7 +40,7 @@ script:
   - cd tmp_for_test
   # Run the tests
   - cd ..
-before_deploy: cd $PROJECT_DIR/dist
+before_deploy: cd $BUILD_PREFIX/lib
 deploy:
   provider: cloudfiles
   username: travis-worker
