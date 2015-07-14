@@ -29,7 +29,7 @@ install:
   - python setup.py bdist_wheel
   - delocate-listdeps dist/*.whl # lists library dependencies
   - cd dist
-  - python $TRAVIS_BUILD_DIR/add_lib_to_wheel.py $BUILD_PREFIX/lib/*.dylib *.whl imageio/resources
+  - python $TRAVIS_BUILD_DIR/add_lib_to_wheel.py $BUILD_PREFIX/lib/*.dylib *.whl imageio/resources/freeimage
   - pip install *.whl
 script:
   # install dependencies for tests e.g - pip install nose

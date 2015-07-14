@@ -23,6 +23,7 @@ def main():
         if not os.path.isfile(fname):
             raise RuntimeError(fname, 'is not a file')
     with InWheel(wheel_fname, wheel_fname):
+        os.makedirs(pkg_sdir)
         shutil.copy2(lib_fname, pkg_sdir)
 
 
