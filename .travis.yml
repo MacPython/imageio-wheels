@@ -25,15 +25,15 @@ install:
   - cp Dist/*.h $BUILD_PREFIX/include
   - cp Dist/*{a,dylib} $BUILD_PREFIX/lib
   # Now build imageio
-  - cd ../../$PROJECT_DIR
+  - cd $TRAVIS_BUILD_DIR/$PROJECT_DIR
   - python setup.py bdist_wheel
   - delocate-listdeps dist/*.whl # lists library dependencies
   - cd dist
-  - python ../add_lib_to_wheel.py $BUILD_PREFIX/lib/*.dylib *.whl imageio
+  - python $TRAVIS_BUILD_DIR/add_lib_to_wheel.py $BUILD_PREFIX/lib/*.dylib *.whl imageio
   - pip install *.whl
-  - cd ..
 script:
   # install dependencies for tests e.g - pip install nose
+  - cd $TRAVIS_BUILD_DIR/$PROJECT_DIR
   - pip install pytest pytest-cov
   - python -c "import sys; print(sys.version, '\n', sys.prefix)";
   # Run unit tests
