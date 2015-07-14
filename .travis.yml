@@ -6,8 +6,6 @@ env:
   - PROJECT_DIR=imageio
   matrix:
   - VERSION=2.7.9 NUMPY_VERSION=1.6.2 # tune to taste
-  - VERSION=3.3.5 NUMPY_VERSION=1.7.1
-  - VERSION=3.4.3 NUMPY_VERSION=1.7.1
 install:
   - source terryfy/travis_tools.sh
   - get_python_environment macpython $VERSION venv
@@ -30,17 +28,18 @@ install:
   - cd ../../$PROJECT_DIR
   - python setup.py bdist_wheel
   - delocate-listdeps dist/*.whl # lists library dependencies
-  - delocate-wheel dist/*.whl # copies library dependencies into wheel
-  - delocate-addplat --rm-orig -x 10_9 -x 10_10 dist/*.whl
-  - pip install dist/*.whl
+  - cd dist
+  - python ../add_lib_to_wheel.py $BUILD_PREFIX/lib/*.dylib *.whl imageio
+  - pip install *.whl
   - cd ..
 script:
   # install dependencies for tests e.g - pip install nose
-  - mkdir tmp_for_test
-  - cd tmp_for_test
-  # Run the tests
+  - pip install pytest pytest-cov
+  - python -c "import sys; print(sys.version, '\n', sys.prefix)";
+  # Run unit tests
+  - python make test installed
   - cd ..
-before_deploy: cd $BUILD_PREFIX/lib
+before_deploy: cd $PROJECT_DIR/dist
 deploy:
   provider: cloudfiles
   username: travis-worker
