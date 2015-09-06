@@ -37,8 +37,7 @@ script:
   - pip install pytest pytest-cov
   - python -c "import sys; print(sys.version, '\n', sys.prefix)";
   # Run unit tests - allow downloads for binary files
-  - export IMAGEIO_NO_INTERNET=false
-  - python make test installed
+  - python make test unit
   - cd ..
 before_deploy: cd $PROJECT_DIR/dist
 deploy:
