@@ -2,7 +2,7 @@ language:
 - objective-c
 env:
   global:
-  - BUILD_COMMIT='latest-tag'  # comment out to build version in submodule
+  #- BUILD_COMMIT='latest-tag'  # comment out to build version in submodule
   - PROJECT_DIR=imageio
   matrix:
   - VERSION=2.7.9 NUMPY_VERSION=1.6.2 # tune to taste
@@ -26,6 +26,7 @@ install:
   - cp Dist/*{a,dylib} $BUILD_PREFIX/lib
   # Now build imageio
   - cd $TRAVIS_BUILD_DIR/$PROJECT_DIR
+  - git pull && git checkout f5511983fc052f51d9f12b2564552597ee7a94e2
   - python setup.py bdist_wheel
   - delocate-listdeps dist/*.whl # lists library dependencies
   - cd dist
