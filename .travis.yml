@@ -30,6 +30,9 @@ install:
   - delocate-listdeps dist/*.whl # lists library dependencies
   - cd dist
   - python $TRAVIS_BUILD_DIR/add_lib_to_wheel.py $BUILD_PREFIX/lib/*.dylib *.whl imageio/resources/freeimage
+  # Rename the file
+  - export extra="cp26.cp27.cp33.cp34.cp35-none-macosx_10_5_x86_64.macosx_10_6_intel"
+  - mv *.whl $( echo *.whl | sed -e "s/py2-none-any/$extra/" )
   - pip install *.whl
 script:
   # install dependencies for tests e.g - pip install nose
